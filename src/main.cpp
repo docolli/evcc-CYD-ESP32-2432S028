@@ -161,7 +161,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   messageTemp += '\0';
 
   // If a message is received on the topic esp32/output, you check the text of the message. 
-  if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/charging") {
+  if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/charging") {
    if(messageTemp == "false"){
       lv_obj_add_flag(ui_spinLadung, LV_OBJ_FLAG_HIDDEN);
     }
@@ -170,7 +170,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/connected") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX +  "/loadpoints/" + (String)LOADPOINT + "/connected") {
    if(messageTemp == "false"){
       lv_obj_add_flag(ui_ImgPlug, LV_OBJ_FLAG_HIDDEN);
     }
@@ -179,21 +179,21 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/chargePower") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/chargePower") {
     lv_label_set_text(ui_txtLadeleistung, messageTemp.c_str());
   }
 
-  else if (String(topic) == "evcc/site/batterySoc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/site/batterySoc") {
     int messageTempInt = messageTemp.toInt(); // remove decimals
     lv_bar_set_value(ui_barHomeBattery, messageTempInt, LV_ANIM_OFF);
   }
 
-  else if (String(topic) == "evcc/site/bufferSoc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/site/bufferSoc") {
     int messageTempInt = messageTemp.toInt(); // remove decimals
     lv_obj_set_style_bg_main_stop(ui_barHomeBattery, (255*(100-messageTempInt))/100, LV_PART_INDICATOR | LV_STATE_DEFAULT);
   }
 
-  else if (String(topic) == "evcc/site/batteryPower") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/site/batteryPower") {
    int messageTempInt = messageTemp.toInt(); // remove decimals
    lv_bar_set_value(ui_barBatteryPower, abs(messageTempInt), LV_ANIM_OFF);
    if (messageTempInt > 0) {
@@ -210,7 +210,7 @@ void callback(char* topic, byte* message, unsigned int length) {
    }
   }
 
-  else if (String(topic) == "evcc/site/gridPower") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/site/gridPower") {
     int messageTempInt = messageTemp.toInt(); // remove decimals
    if (messageTempInt >= 100) {
       lv_bar_set_value(ui_barGridPower, abs(messageTempInt), LV_ANIM_OFF);
@@ -235,7 +235,7 @@ void callback(char* topic, byte* message, unsigned int length) {
    }
   }
 
-  else if (String(topic) == "evcc/site/pvPower") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/site/pvPower") {
    int messageTempInt = messageTemp.toInt(); // remove decimals
    lv_bar_set_value(ui_barSolarPower, messageTempInt, LV_ANIM_OFF);
    if (messageTempInt >= 100) {
@@ -250,17 +250,17 @@ void callback(char* topic, byte* message, unsigned int length) {
    }
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/vehicleSoc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/vehicleSoc") {
     int messageTempInt = messageTemp.toInt(); // remove decimals
     lv_label_set_text(ui_txtLadestand, (String(messageTempInt) + "%").c_str());
     lv_bar_set_value(ui_barCarSoc, messageTempInt, LV_ANIM_OFF);
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/vehicleRange") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/vehicleRange") {
     lv_label_set_text(ui_txtReichweite, messageTemp.c_str());
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/chargeRemainingDuration") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/chargeRemainingDuration") {
     // Convert Unix Time to hour:min
     // format with sprintf
     int messageTempInt = messageTemp.toInt(); 
@@ -269,27 +269,27 @@ void callback(char* topic, byte* message, unsigned int length) {
     lv_label_set_text(ui_txtRestzeit, timestamp);
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/chargedEnergy") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/chargedEnergy") {
     float messageTempInt = messageTemp.toFloat()/1000; // remove decimals and convert to kWh
     lv_label_set_text(ui_txtLadeenergie, String(messageTempInt).c_str());
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/effectiveLimitSoc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/effectiveLimitSoc") {
     int messageTempInt = messageTemp.toInt(); // remove decimals
     lv_label_set_text(ui_txtLadelimit, (String(messageTempInt) + "%").c_str());
     lv_slider_set_value(ui_sliderSocLimit, messageTempInt, LV_ANIM_OFF);
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/title") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/title") {
     lv_label_set_text(ui_lblLadepunkt, String(LOADPOINT + ": " + messageTemp).c_str());
   }
 
-  else if (String(topic) == "evcc/vehicles/ev1/title") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/title") {
     lv_label_set_text(ui_lblAuto, messageTemp.c_str());
   }
 
 
-  else if (String(topic) == "evcc/vehicles/ev1/plans") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans") {
     Plan = messageTemp.toInt(); // remove decimals
     if (Plan == true) {
       lv_obj_set_style_bg_color(ui_BtnModusPlan, lv_color_hex(COL_BUTTON_PLAN_ACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -299,7 +299,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == "evcc/vehicles/ev1/plans/1/soc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans/1/soc") {
     PlanSoc = messageTemp.toInt(); // remove decimals
     lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + PlanTime +" h").c_str());
     if (Plan == true) {
@@ -309,7 +309,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == "evcc/vehicles/ev1/plans/1/time") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans/1/time") {
     char timestamp[5];
     sprintf(timestamp,"%02d:%02d", hour(messageTemp.toInt()), minute(messageTemp.toInt()));
     PlanTime = timestamp;
@@ -321,7 +321,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/mode") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/mode") {
     if(messageTemp == "pv"){
       lv_obj_set_style_bg_color(ui_BtnModusPv, lv_color_hex(COL_BUTTON_PV_ACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
       lv_obj_set_style_bg_color(ui_BtnModusNow, lv_color_hex(COL_BUTTON_INACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -336,7 +336,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == "evcc/loadpoints/" + (String)LOADPOINT + "/sessionSolarPercentage") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/sessionSolarPercentage") {
     int messageTempInt = (int)(messageTemp.toFloat() + 0.5); // round and remove decimals
     lv_bar_set_value(ui_barSolarGrid, messageTempInt, LV_ANIM_OFF);
   }
