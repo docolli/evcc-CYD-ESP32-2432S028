@@ -290,7 +290,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
 
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + (String)VEHICLE + "/plans") {
     Plan = messageTemp.toInt(); // remove decimals
     if (Plan == true) {
       lv_obj_set_style_bg_color(ui_BtnModusPlan, lv_color_hex(COL_BUTTON_PLAN_ACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -300,7 +300,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans/" + (String)VEHICLE_PLAN + "/soc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + (String)VEHICLE + "/plans/" + (String)VEHICLE_PLAN + "/soc") {
     PlanSoc = messageTemp.toInt(); // remove decimals
     lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + PlanTime +" h").c_str());
     if (Plan == true) {
@@ -310,11 +310,16 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans/" + (String)VEHICLE_PLAN + "/time") {
-    char timestamp[5];
-    sprintf(timestamp,"%02d:%02d", hour(messageTemp.toInt()), minute(messageTemp.toInt()));
-    PlanTime = timestamp;
-    lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + PlanTime +" h").c_str());
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + (String)VEHICLE + "/plans/" + (String)VEHICLE_PLAN + "/time") {
+  time_t rawtime = messageTemp.toInt();
+  struct tm ts;
+  char buf[100];
+  ts = *localtime(&rawtime);
+  // strftime(buf, sizeof buf - 1, "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+  strftime(buf, sizeof buf - 1, "%H:%M h", &ts);
+  Serial.println(buf);
+
+    lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + buf).c_str());
     if (Plan == true) {
       lv_obj_set_style_bg_color(ui_BtnModusPlan, lv_color_hex(COL_BUTTON_PLAN_ACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
     } else {
@@ -506,6 +511,13 @@ void setup()
   lv_bar_set_range(ui_barSolarPower, 0, MAX_SOLAR_POWER);
   lv_bar_set_range(ui_barGridPower, 0, MAX_GRID_POWER);
   lv_bar_set_range(ui_barBatteryPower, 0, MAX_HOMEBAT_POWER);
+
+  /* time setup */
+  // struct tm timeinfo;
+  // configTime(0, 0, "pool.ntp.org");
+  setenv("TZ","CET-1CEST,M3.5.0,M10.5.0/3",1);
+  tzset();
+
   
   Serial.println( "Setup done" );
 }
