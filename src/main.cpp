@@ -285,20 +285,12 @@ void callback(char* topic, byte* message, unsigned int length) {
     lv_label_set_text(ui_lblLadepunkt, String(LOADPOINT + ": " + messageTemp).c_str());
   }
 
-<<<<<<< HEAD
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/title") {
-=======
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/title") {
->>>>>>> 0318fa4811a7325567fca68469adfd36c338b8f6
     lv_label_set_text(ui_lblAuto, messageTemp.c_str());
   }
 
 
-<<<<<<< HEAD
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans") {
-=======
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans") {
->>>>>>> 0318fa4811a7325567fca68469adfd36c338b8f6
     Plan = messageTemp.toInt(); // remove decimals
     if (Plan == true) {
       lv_obj_set_style_bg_color(ui_BtnModusPlan, lv_color_hex(COL_BUTTON_PLAN_ACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -308,11 +300,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-<<<<<<< HEAD
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans/" + (String)VEHICLE_PLAN + "/soc") {
-=======
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans/1/soc") {
->>>>>>> 0318fa4811a7325567fca68469adfd36c338b8f6
     PlanSoc = messageTemp.toInt(); // remove decimals
     lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + PlanTime +" h").c_str());
     if (Plan == true) {
@@ -322,11 +310,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-<<<<<<< HEAD
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans/" + (String)VEHICLE_PLAN + "/time") {
-=======
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans/1/time") {
->>>>>>> 0318fa4811a7325567fca68469adfd36c338b8f6
     char timestamp[5];
     sprintf(timestamp,"%02d:%02d", hour(messageTemp.toInt()), minute(messageTemp.toInt()));
     PlanTime = timestamp;
