@@ -76,6 +76,7 @@ int value = 0;
 int Plan = 0;
 int PlanSoc = 0;
 String PlanTime = "00:00";
+String ConnectedCar = "";
 
 //_______________________
 /* display flash */
@@ -284,12 +285,12 @@ void callback(char* topic, byte* message, unsigned int length) {
     lv_label_set_text(ui_lblLadepunkt, String(LOADPOINT + ": " + messageTemp).c_str());
   }
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/title") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/title") {
     lv_label_set_text(ui_lblAuto, messageTemp.c_str());
   }
 
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans") {
     Plan = messageTemp.toInt(); // remove decimals
     if (Plan == true) {
       lv_obj_set_style_bg_color(ui_BtnModusPlan, lv_color_hex(COL_BUTTON_PLAN_ACTIVE), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -299,7 +300,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans/1/soc") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans/" + (String)VEHICLE_PLAN + "/soc") {
     PlanSoc = messageTemp.toInt(); // remove decimals
     lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + PlanTime +" h").c_str());
     if (Plan == true) {
@@ -309,7 +310,7 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
   }
 
-  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/ev1/plans/1/time") {
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/plans/" + (String)VEHICLE_PLAN + "/time") {
     char timestamp[5];
     sprintf(timestamp,"%02d:%02d", hour(messageTemp.toInt()), minute(messageTemp.toInt()));
     PlanTime = timestamp;
@@ -341,6 +342,9 @@ void callback(char* topic, byte* message, unsigned int length) {
     lv_bar_set_value(ui_barSolarGrid, messageTempInt, LV_ANIM_OFF);
   }
 
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/vehicleName") {
+    ConnectedCar = messageTemp;
+  }
 }
 
 void reconnect() {
@@ -568,6 +572,7 @@ void sendEvccPlan(lv_event_t * e)
   // serverPath += PLAN_TIME;
   http_client.begin(serverPath.c_str());
     http_client.addHeader("Content-Type", "text/plain");
+    /* DELETE method not available, so using sendRequest */
     int httpResponseCode = http_client.sendRequest("DELETE", "");
       // if (httpResponseCode>0) {
       //     Serial.print("HTTP Response code: ");
@@ -586,10 +591,6 @@ http_client.end();
 void sendEvccLimitSoc(lv_event_t * e)
 {
   lv_obj_t * slider = lv_event_get_target(e);
-  // char buf[8];
-  // lv_snprintf(buf, sizeof(buf), "%d%", (int)round5(lv_slider_get_value(slider)));
-
-  // Serial.println("LimitSoc auf " + (String)buf + "% gesetzt!");
 
   String serverPath = "http://";
   serverPath += EVCC_SERVER_IP ; 
