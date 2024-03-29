@@ -5,10 +5,12 @@
 #define SSID        "SSID"
 #define PASSWORD    "PASSWORT"
 
-// MQTT settings
-#define EVCC_MQTT_PREFIX    "evcc"
+// Network settings
 #define EVCC_SERVER_IP      "xxx.xxx.xxx.xxx"
 #define EVCC_SERVER_PORT    7070
+#define EVCC_MQTT_PREFIX    "evcc"
+#define MQTT_SERVER_IP      "xxx.xxx.xxx.xxx"
+#define MQTT_SERVER_PORT    1883
 
 // EVCC references
 #define LOADPOINT       1

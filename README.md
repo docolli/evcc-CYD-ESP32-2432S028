@@ -14,7 +14,7 @@ Das Projekt ist in Visual Studio Code geschrieben mit PlatformIO IDE (v3.3.3). D
 
 Um das Projekt kompiliert zu bekommen, muss die Datei `config.h.template` in `config.h` umbenannt und darin die passenden Einstellungen gesetzt werden!
 
-Da evcc nicht alle MQTT Topics häufig veröffentlicht, kann es dauern, bis alle Werte komplett auf dem Display dargestellt werden.
+Da evcc nicht alle MQTT Topics häufig veröffentlicht, kann es dauern, bis alle Werte komplett auf dem Display dargestellt werden. Abhilfe: evcc sendet die MQTT Topics mit dem Flag `retain`, d.h. der MQTT Broker sollte so konfiguriert sein, dass er die Topics zwischenspeichert, dann werden die Werte des Displays nach einem Reboot auch schnell wieder befüllt. 
 
 ## ToDo:
 - Umrechnung der angezeigten Ladezeit von UTC auf lokale Zeit

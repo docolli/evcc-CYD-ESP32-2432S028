@@ -63,7 +63,8 @@ const char* password = PASSWORD;
 
 // Add your MQTT Broker IP address, example:
 //const char* mqtt_server = "192.168.1.144";
-const char* mqtt_server = EVCC_SERVER_IP;
+const char* mqtt_server = MQTT_SERVER_IP;
+const int mqtt_server_port = MQTT_SERVER_PORT;
 
 WiFiClient espClient;
 HTTPClient http_client;
@@ -496,7 +497,7 @@ void setup()
 
   /* Wifi & Mqtt Setup */
   setup_wifi();
-  wifi_client.setServer(mqtt_server, 1883);
+  wifi_client.setServer(mqtt_server, mqtt_server_port);
   wifi_client.setCallback(callback);
 
   /*Set User defined values from config.h to GUI elements*/
