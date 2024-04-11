@@ -400,8 +400,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_border_side(ui_pnlSolar, LV_BORDER_SIDE_TOP, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_barSolarGrid = lv_bar_create(ui_MainScreen);
-    lv_bar_set_range(ui_barSolarGrid, -2, 102);
-    lv_bar_set_value(ui_barSolarGrid, 50, LV_ANIM_OFF);
+    lv_bar_set_value(ui_barSolarGrid, 100, LV_ANIM_OFF);
     lv_bar_set_start_value(ui_barSolarGrid, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui_barSolarGrid, 230);
     lv_obj_set_height(ui_barSolarGrid, 12);

@@ -162,6 +162,9 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
   messageTemp += '\0';
 
+  Serial.println("MQTT received: " + (String)topic);
+  Serial.println("ConnectedCar: " + (String)ConnectedCar);
+
   // If a message is received on the topic esp32/output, you check the text of the message. 
   if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/charging") {
    if(messageTemp == "false"){
@@ -274,6 +277,12 @@ void callback(char* topic, byte* message, unsigned int length) {
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/chargedEnergy") {
     float messageTempInt = messageTemp.toFloat()/1000; // remove decimals and convert to kWh
     lv_label_set_text(ui_txtLadeenergie, String(messageTempInt).c_str());
+    // hide percentage bar solar/grid when there are no last loading session values available
+    if (messageTempInt == 0) {
+      lv_obj_add_flag(ui_barSolarGrid, LV_OBJ_FLAG_HIDDEN);
+    } else {
+      lv_obj_clear_flag(ui_barSolarGrid, LV_OBJ_FLAG_HIDDEN);
+    }
   }
 
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/effectiveLimitSoc") {
@@ -287,6 +296,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
 
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/title") {
+    Serial.println("MQTT: "+ ConnectedCar);
     lv_label_set_text(ui_lblAuto, messageTemp.c_str());
   }
 
@@ -350,6 +360,7 @@ void callback(char* topic, byte* message, unsigned int length) {
 
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/vehicleName") {
     ConnectedCar = messageTemp;
+    Serial.println("NEW: " + ConnectedCar);
   }
 }
 
@@ -361,7 +372,7 @@ void reconnect() {
     lv_timer_handler();
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (wifi_client.connect("evcc-display")) {
+    if (wifi_client.connect(MQTT_SERVER_CLIENT, MQTT_SERVER_USER, MQTT_SERVER_PASS)) {
       Serial.println("connected");
       lv_obj_add_flag(ui_pnlDark, LV_OBJ_FLAG_HIDDEN);     /// Flags
       lv_obj_add_flag(ui_lblMqttWait, LV_OBJ_FLAG_HIDDEN);     /// Flags
