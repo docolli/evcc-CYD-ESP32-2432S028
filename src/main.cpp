@@ -79,6 +79,45 @@ int PlanSoc = 0;
 String PlanTime = "00:00";
 String ConnectedCar = "";
 
+struct data {
+  int site_battery;
+  int site_batterySoc;
+  int site_bufferSoc;
+  int site_batteryPower;
+  int site_gridPower;
+  int site_pvPower;
+  int loadpoint_charging;
+  int loadpoint_connected;
+  int loadpoint_chargePower;
+  int loadpoint_vehicleSoc;
+  int loadpoint_chargeRemainingDuration;
+  int loadpoint_sessionSolarPercentage;
+  int loadpoint_effectiveLimitSoc;
+  float loadpoint_chargedEnergy;
+  int vehicle_plans;
+  int vehicle_planSoc;
+};
+
+data MQTTdata = 
+{
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+};
+
 //_______________________
 /* display flash */
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
@@ -172,6 +211,20 @@ void callback(char* topic, byte* message, unsigned int length) {
     }
     else if(messageTemp == "true"){
      lv_obj_clear_flag(ui_spinLadung, LV_OBJ_FLAG_HIDDEN);
+    }
+  }
+
+  else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/site/battery") {
+    MQTTdata.site_battery = messageTemp.toInt(); // remove decimals
+    if(MQTTdata.site_battery == 0) {
+      lv_obj_add_flag(ui_ImgBattery, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_add_flag(ui_barBatteryPower, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_add_flag(ui_barHomeBattery, LV_OBJ_FLAG_HIDDEN);
+    } 
+    else {
+      lv_obj_clear_flag(ui_ImgBattery, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(ui_barBatteryPower, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(ui_barHomeBattery, LV_OBJ_FLAG_HIDDEN);
     }
   }
 
@@ -296,7 +349,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
 
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/vehicles/" + ConnectedCar + "/title") {
-    Serial.println("MQTT: "+ ConnectedCar);
+    // Serial.println("MQTT: "+ ConnectedCar);
     lv_label_set_text(ui_lblAuto, messageTemp.c_str());
   }
 
@@ -328,7 +381,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   ts = *localtime(&rawtime);
   // strftime(buf, sizeof buf - 1, "%a %Y-%m-%d %H:%M:%S %Z", &ts);
   strftime(buf, sizeof buf - 1, "%H:%M h", &ts);
-  Serial.println(buf);
+  // Serial.println(buf);
 
     lv_label_set_text(ui_txtBtnModusPlan, ("Plan\n" + String(PlanSoc) + "%\n" + buf).c_str());
     if (Plan == true) {
@@ -360,7 +413,7 @@ void callback(char* topic, byte* message, unsigned int length) {
 
   else if (String(topic) == (String)EVCC_MQTT_PREFIX + "/loadpoints/" + (String)LOADPOINT + "/vehicleName") {
     ConnectedCar = messageTemp;
-    Serial.println("NEW: " + ConnectedCar);
+    // Serial.println("NEW: " + ConnectedCar);
   }
 }
 
@@ -410,6 +463,7 @@ void reconnect() {
 
       // subscribe to site topics
       String site_topics[] = {
+        "battery",
         "batterySoc", 
         "bufferSoc", 
         "batteryPower", 
