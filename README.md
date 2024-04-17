@@ -17,6 +17,5 @@ Um das Projekt kompiliert zu bekommen, muss die Datei `config.h.template` in `co
 Da evcc nicht alle MQTT Topics häufig veröffentlicht, kann es dauern, bis alle Werte komplett auf dem Display dargestellt werden. Abhilfe: evcc sendet die MQTT Topics mit dem Flag `retain`, d.h. der MQTT Broker sollte so konfiguriert sein, dass er die Topics zwischenspeichert, dann werden die Werte des Displays nach einem Reboot auch schnell wieder befüllt. 
 
 ## ToDo:
-- Umrechnung der angezeigten Ladezeit von UTC auf lokale Zeit
-- Setzen eines Ladeplans
+- Setzen eines Ladeplans (aktuell wird Plan nur gelöscht)
 - Hinterlegung von User-spezifischen Werten in eine Datei auf SD-Karte
